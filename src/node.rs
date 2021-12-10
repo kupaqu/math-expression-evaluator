@@ -15,4 +15,16 @@ impl Node {
             token: my_token
         }
     }
+    pub fn bin_op(left: Node, my_token: Token, right: Node) -> Node {
+        Node {
+            children: vec![left, right],
+            token: my_token
+        }
+    }
+    pub fn un_op(my_token: Token, my_child: Node) -> Node {
+        Node {
+            children: vec![my_child],
+            token: my_token
+        }
+    }
 }
