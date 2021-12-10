@@ -8,71 +8,71 @@ pub struct Parser {
 
 impl Parser {
 
-    fn new (my_tokens: Vec<Token>) -> Parser {
+    pub fn new (my_tokens: Vec<Token>) -> Parser {
         Parser {
             tokens: my_tokens,
             pos: 0
         }
     }
 
-    fn check_token(mut self, token: Token) -> Result<(), String> {
-        if self.tokens[self.pos] == token && self.pos > self.tokens.len() {
-            self.pos += 1;
-            return Ok(());
-        }
-        return Err(format!("Invalid token order"));
-    }
+}
 
-    fn expr (mut self) -> Node {
-        let ops = [Token::Plus, Token::Minus];
-        let mut result = self.term();
-        while ops.contains(&self.tokens[self.pos]) {
-            let token = self.tokens[self.pos];
-            if token == Token::Plus {
-                self.check_token(Token::Plus);
-            } else {
-                self.check_token(Token::Minus);
-            }
-            result = Node::bin_op(result, token, self.term());
-        }
-        return result;
-    }
+pub fn parse(mut parser: Parser) -> Node {
+    expr(parser)
+}
 
-    fn term (mut self) -> Node {
-        let ops = [Token::Mul, Token::Div];
-        let mut result = self.pow();
-        while ops.contains(&self.tokens[self.pos]) {
-            let token = self.tokens[self.pos];
-            if token == Token::Mul {
-                self.check_token(Token::Mul);
-            } else {
-                self.check_token(Token::Div);
-            }
-            result = Node::bin_op(result, token, self.pow());
-        }
-        return result;
+pub fn expr(mut parser: Parser) -> Node {
+    let ops = [Token::Plus, Token::Minus];
+    let res = term(parser);
+    let mut current_token = parser.tokens[parser.pos].clone();
+    while ops.contains(&current_token) {
+        parser.pos += 1;
+        res = Node::bin_op(res, current_token, term(parser))
     }
+    return res;
+}
 
-    fn pow (mut self) -> Node {
-        let ops = [Token::Pow];
-        let mut result = self.factor().unwrap();
-        while ops.contains(&self.tokens[self.pos]) {
-            let token = self.tokens[self.pos];
-            if token == Token::Pow {
-                self.check_token(Token::Pow);
-            }
-            result = Node::bin_op(result, token, self.factor().unwrap());
-        }
-        return result;
+pub fn term(mut parser: Parser) -> Node {
+    let ops = [Token::Mul, Token::Div];
+    let res = pow(parser);
+    let mut current_token = parser.tokens[parser.pos].clone();
+    while ops.contains(&current_token) {
+        parser.pos += 1;
+        res = Node::bin_op(res, current_token, pow(parser))
     }
+    return res;
+}
 
-    fn factor (mut self) -> Result<Node, String> {
-        let token = self.tokens[self.pos];
-        if token == Token::Plus {
-            self.check_token(Token::Plus);
-            return Ok(Node::un_op(token, self.factor()?));
-        } else {
-            return Err(format!("Invalid token order!"));
-        }
+pub fn pow(mut parser: Parser) -> Node {
+    let ops = [Token::Pow];
+    let res = factor(parser);
+    let mut current_token = parser.tokens[parser.pos].clone();
+    while ops.contains(&current_token) {
+        parser.pos += 1;
+        res = Node::bin_op(res, current_token, factor(parser))
     }
+    return res;
+}
+
+pub fn factor(mut parser: Parser) -> Node {
+    let mut current_token = parser.tokens[parser.pos].clone();
+
+    if vec![Token::Plus, Token::Minus].contains(&current_token) {
+        parser.pos += 1;
+        return Node::un_op(current_token, factor(parser));
+    }
+    if vec![Token::Lparen].contains(&current_token) {
+        parser.pos += 1;
+        let res = expr(parser);
+        current_token = parser.tokens[parser.pos].clone();
+        if vec![Token::Rparen].contains(&current_token) {
+            parser.pos += 1;
+        }
+        return Node::un_op(current_token, factor(parser));
+    }
+    if let Token::Number(n) = current_token {
+        parser.pos += 1;
+        return Node::new(current_token);
+    }
+    return Node::new(Token::Eos);
 }

@@ -1,4 +1,4 @@
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Token {
     Number(u32),
     Plus,
@@ -7,7 +7,8 @@ pub enum Token {
     Div,
     Pow,
     Lparen,
-    Rparen
+    Rparen,
+    Eos
 }
 
 #[cfg(test)]
