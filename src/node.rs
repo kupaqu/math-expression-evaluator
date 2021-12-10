@@ -28,4 +28,10 @@ impl Node {
             token: my_token
         }
     }
+    pub fn number(my_token: Token) -> Node {
+        Node {
+            children: Vec::new(),
+            token: my_token
+        }
+    }
 }

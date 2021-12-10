@@ -16,6 +16,5 @@ use interpreter::*;
 fn main() {
     println!("Hello, world!");
     println!("{:?}", tokenize("1 + 2 + 34 + 567"));
-    let mut parser = Parser::new(tokenize("1+2").unwrap());
-    println!("{:?}", parse(parser))
+    println!("{:?}", parse(&tokenize("1 + 2 + 3 + 4 + 5 + 6").unwrap(), 0))
 }

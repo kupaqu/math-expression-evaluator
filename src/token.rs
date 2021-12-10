@@ -1,4 +1,4 @@
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Token {
     Number(u32),
     Plus,
@@ -9,6 +9,19 @@ pub enum Token {
     Lparen,
     Rparen,
     Eos
+}
+
+impl Token {
+    // pub fn get_number(&self) -> u32 {
+    //     let Token::Number(n) = self;
+    //     return Ok(*n);
+    // }
+    pub fn is_number(&self) -> bool {
+        match self {
+            Token::Number(_) => true,
+            _ => false
+        }
+    }
 }
 
 #[cfg(test)]
