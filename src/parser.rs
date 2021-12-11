@@ -19,31 +19,31 @@ impl<'a> Parser<'a> {
     }
     pub fn expr(&mut self) -> Node {
         let ops = [Token::Plus, Token::Minus];
-        let result = self.term();
+        let mut result = self.term();
         let cur = self.current_token();
-        while ops.contains(&cur) {
+        while ops.contains(&self.current_token()) {
             self.pos += 1;
-            return Node::bin_op(result, cur, self.term());
+            result = Node::bin_op(result, cur, self.term());
         }
         return result;
     }
     pub fn term(&mut self) -> Node {
         let ops = [Token::Mul, Token::Div];
-        let result = self.pow();
+        let mut result = self.pow();
         let cur = self.current_token();
         while ops.contains(&cur) {
             self.pos += 1;
-            return Node::bin_op(result, cur, self.pow());
+            result = Node::bin_op(result, cur, self.pow());
         }
         return result;
     }
     pub fn pow(&mut self) -> Node {
         let ops = [Token::Pow];
-        let result = self.factor().unwrap();
+        let mut result = self.factor().unwrap();
         let cur = self.current_token();
         while ops.contains(&cur) {
             self.pos += 1;
-            return Node::bin_op(result, cur, self.factor().unwrap())
+            result = Node::bin_op(result, cur, self.factor().unwrap())
         }
         return result;
     }
