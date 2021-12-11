@@ -31,7 +31,7 @@ impl<'a> Parser<'a> {
         let ops = [Token::Mul, Token::Div];
         let mut result = self.pow();
         let cur = self.current_token();
-        while ops.contains(&cur) {
+        while ops.contains(&self.current_token()) {
             self.pos += 1;
             result = Node::bin_op(result, cur, self.pow());
         }
@@ -41,7 +41,7 @@ impl<'a> Parser<'a> {
         let ops = [Token::Pow];
         let mut result = self.factor().unwrap();
         let cur = self.current_token();
-        while ops.contains(&cur) {
+        while ops.contains(&self.current_token()) {
             self.pos += 1;
             result = Node::bin_op(result, cur, self.factor().unwrap())
         }
@@ -49,15 +49,15 @@ impl<'a> Parser<'a> {
     }
     pub fn factor(&mut self) -> Result<Node, String> {
         let cur = self.current_token();
-        if [Token::Plus, Token::Minus].contains(&cur) {
+        if [Token::Plus, Token::Minus].contains(&self.current_token()) {
             self.pos += 1;
             return Ok(Node::un_op(cur, self.factor().unwrap()));
         }
-        if cur.is_number() {
+        if self.current_token().is_number() {
             self.pos += 1;
             return Ok(Node::number(cur));
         }
-        if cur == Token::Lparen {
+        if self.current_token() == Token::Lparen {
             self.pos += 1;
             let result = self.expr();
             if self.current_token() == Token::Rparen {
