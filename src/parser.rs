@@ -1,60 +1,48 @@
 use super::token::*;
 use super::node::*;
 
-pub fn parse(tokens: &Vec<Token>, pos: usize) -> Result<Node, String> {
-    expr(tokens, 0)
+pub struct Parser<'a> {
+    tokens: &'a Vec<Token>,
+    pos: usize
 }
 
-pub fn expr(tokens: &Vec<Token>, pos: usize) -> Result<Node, String> {
-    if pos > tokens.len() {
-        return Err(format!("End of sequence"));
+impl<'a> Parser<'a> {
+    pub fn new(my_tokens: &Vec<Token>) -> Parser {
+        Parser {
+            tokens: my_tokens,
+            pos: 0
+        }
     }
-    let ops = [Token::Plus, Token::Minus];
-    let mut res = term(tokens, pos).unwrap();
-    let current_token = tokens[pos];
-    while ops.contains(&current_token) {
-        res = Node::bin_op(res, current_token, term(tokens, pos+1).unwrap())
+    fn current_token(&mut self) -> Token {
+        self.tokens[self.pos]
     }
-    return Ok(res);
-}
-
-pub fn term(tokens: &Vec<Token>, pos: usize) -> Result<Node, String> {
-    if pos > tokens.len() {
-        return Err(format!("End of sequence"));
+    pub fn expr(&mut self) -> Node {
+        let ops = [Token::Plus, Token::Minus];
+        let result = self.term();
+        let cur = self.current_token();
+        while ops.contains(&cur) {
+            self.pos += 1;
+            return Node::bin_op(result, cur, self.term());
+        }
+        return result;
     }
-    let ops = [Token::Mul, Token::Div];
-    let mut res = pow(tokens, pos).unwrap();
-    let current_token = tokens[pos];
-    while ops.contains(&current_token) {
-        res = Node::bin_op(res, current_token, pow(tokens, pos+1).unwrap())
+    pub fn term(&mut self) -> Node {
+        let ops = [Token::Mul, Token::Div];
+        let result = self.factor().unwrap();
+        let cur = self.current_token();
+        while ops.contains(&cur) {
+            self.pos += 1;
+            return Node::bin_op(result, cur, self.factor().unwrap());
+        }
+        return result;
     }
-    return Ok(res);
-}
-
-pub fn pow(tokens: &Vec<Token>, pos: usize) -> Result<Node, String> {
-    if pos > tokens.len() {
-        return Err(format!("End of sequence"));
+    pub fn factor(&mut self) -> Result<Node, String> {
+        let cur = self.current_token();
+        if cur.is_number() {
+            self.pos += 1;
+            return Ok(Node::number(cur));
+        } else {
+            return Err(format!("Unexpected token {:?}", self.current_token()));
+        }
     }
-    let ops = [Token::Pow];
-    let mut res = factor(tokens, pos).unwrap();
-    let current_token = tokens[pos];
-    while ops.contains(&current_token) {
-        res = Node::bin_op(res, current_token, factor(tokens, pos+1).unwrap())
-    }
-    return Ok(res);
-}
-
-pub fn factor(tokens: &Vec<Token>, pos: usize) -> Result<Node, String> {
-    let current_token = tokens[pos];
-    if [Token::Plus, Token::Minus].contains(&current_token) {
-        return Ok(Node::un_op(current_token, factor(tokens, pos+1).unwrap()));
-    } else if current_token.is_number() {
-        return Ok(Node::number(current_token))
-    } else if current_token == Token::Lparen {
-        let res = expr(tokens, pos+1);
-        // TODO: добавить правую скобку
-
-        return res;
-    }
-    Err(format!("Invalid token sequence"))
 }

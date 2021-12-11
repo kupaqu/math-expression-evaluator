@@ -17,6 +17,7 @@ impl Node {
         }
     }
     pub fn bin_op(left: Node, my_token: Token, right: Node) -> Node {
+        println!("binop {:?}", my_token);
         Node {
             children: vec![left, right],
             token: my_token
@@ -29,6 +30,7 @@ impl Node {
         }
     }
     pub fn number(my_token: Token) -> Node {
+        println!("number {:?}", my_token);
         Node {
             children: Vec::new(),
             token: my_token

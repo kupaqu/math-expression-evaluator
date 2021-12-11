@@ -15,6 +15,12 @@ use interpreter::*;
 
 fn main() {
     println!("Hello, world!");
-    println!("{:?}", tokenize("1 + 2 + 34 + 567"));
-    println!("{:?}", parse(&tokenize("1 + 2 + 3 + 4 + 5 + 6").unwrap(), 0))
+    let tokens = tokenize("1+2+3+4");
+
+    if let Ok(tree) = tokenize("1+2*3") {
+        let mut parser = Parser::new(&tree);
+        println!("{:?}", parser.expr());
+    }
+
+    // let mut parser = Parser::new(&tokens.unwrap());
 }
