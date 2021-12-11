@@ -9,13 +9,7 @@ pub struct Node {
 }
 
 impl Node {
-    /* конструктор */
-    pub fn new(my_token: Token) -> Node {
-        Node {
-            children: Vec::new(),
-            token: my_token
-        }
-    }
+    /* конструкторы */
     pub fn bin_op(left: Node, my_token: Token, right: Node) -> Node {
         println!("binop {:?}", my_token);
         Node {

@@ -28,21 +28,44 @@ impl<'a> Parser<'a> {
     }
     pub fn term(&mut self) -> Node {
         let ops = [Token::Mul, Token::Div];
+        let result = self.pow();
+        let cur = self.current_token();
+        while ops.contains(&cur) {
+            self.pos += 1;
+            return Node::bin_op(result, cur, self.pow());
+        }
+        return result;
+    }
+    pub fn pow(&mut self) -> Node {
+        let ops = [Token::Pow];
         let result = self.factor().unwrap();
         let cur = self.current_token();
         while ops.contains(&cur) {
             self.pos += 1;
-            return Node::bin_op(result, cur, self.factor().unwrap());
+            return Node::bin_op(result, cur, self.factor().unwrap())
         }
         return result;
     }
     pub fn factor(&mut self) -> Result<Node, String> {
         let cur = self.current_token();
+        if [Token::Plus, Token::Minus].contains(&cur) {
+            self.pos += 1;
+            return Ok(Node::un_op(cur, self.factor().unwrap()));
+        }
         if cur.is_number() {
             self.pos += 1;
             return Ok(Node::number(cur));
-        } else {
-            return Err(format!("Unexpected token {:?}", self.current_token()));
         }
+        // if cur == Token::Lparen {
+        //     self.pos += 1;
+        //     let result = self.expr();
+        //     if self.current_token() == Token::Rparen {
+        //         self.pos += 1;
+        //         return Ok(result);
+        //     } else {
+        //         return Err(format!("Expected Token::Rparen"));
+        //     }
+        // }
+        return Err(format!("Unexpected token {:?}", self.current_token()));
     }
 }
