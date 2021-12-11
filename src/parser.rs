@@ -14,7 +14,8 @@ impl<'a> Parser<'a> {
         }
     }
     fn current_token(&mut self) -> Token {
-        self.tokens[self.pos]
+        println!("pos: {}", self.pos);
+        return self.tokens[self.pos];
     }
     pub fn expr(&mut self) -> Node {
         let ops = [Token::Plus, Token::Minus];
@@ -56,16 +57,16 @@ impl<'a> Parser<'a> {
             self.pos += 1;
             return Ok(Node::number(cur));
         }
-        // if cur == Token::Lparen {
-        //     self.pos += 1;
-        //     let result = self.expr();
-        //     if self.current_token() == Token::Rparen {
-        //         self.pos += 1;
-        //         return Ok(result);
-        //     } else {
-        //         return Err(format!("Expected Token::Rparen"));
-        //     }
-        // }
+        if cur == Token::Lparen {
+            self.pos += 1;
+            let result = self.expr();
+            if self.current_token() == Token::Rparen {
+                self.pos += 1;
+                return Ok(result);
+            } else {
+                return Err(format!("Expected Token::Rparen"));
+            }
+        }
         return Err(format!("Unexpected token {:?}", self.current_token()));
     }
 }

@@ -14,11 +14,8 @@ mod interpreter;
 use interpreter::*;
 
 fn main() {
-    println!("Hello, world!");
-    let tokens = tokenize("1+2+3+4");
-
-    if let Ok(tree) = tokenize("1+2+3+4+5+6+7") {
-        let mut parser = Parser::new(&tree);
+    if let Ok(tokens) = tokenize("1+2+3+4+5") {
+        let mut parser = Parser::new(&tokens);
         println!("{:?}", parser.expr());
     }
 

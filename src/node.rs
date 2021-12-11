@@ -18,6 +18,7 @@ impl Node {
         }
     }
     pub fn un_op(my_token: Token, my_child: Node) -> Node {
+        println!("unop {:?}", my_token);
         Node {
             children: vec![my_child],
             token: my_token
