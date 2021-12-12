@@ -1,6 +1,6 @@
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Token {
-    Number(u32),
+    Number(f64),
     Plus,
     Minus,
     Mul,
@@ -22,6 +22,12 @@ impl Token {
             _ => false
         }
     }
+    pub fn get_num(&self) -> Result<f64, String> {
+        if let Token::Number(f) = self {
+            return Ok(*f);
+        }
+        return Err(format!("Calling get_num on non-numeric token"));
+    }
 }
 
 #[cfg(test)]
@@ -29,8 +35,8 @@ mod tests {
     use super::*;
     #[test]
     fn test_token() {
-        if let Token::Number(num) = Token::Number(100) {
-            assert_eq!(num, 100);
+        if let Token::Number(num) = Token::Number(100.) {
+            assert_eq!(num, 100.);
         }
     }
 }
