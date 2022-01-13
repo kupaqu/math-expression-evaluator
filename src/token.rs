@@ -8,6 +8,12 @@ pub enum Token {
     Pow,
     Lparen,
     Rparen,
+    Begin,
+    End,
+    Variable(char),
+    Equation,
+    Semicolon,
+    Dot,
     Eos
 }
 
