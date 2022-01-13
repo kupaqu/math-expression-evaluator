@@ -29,9 +29,14 @@ impl<'a> Parser<'a> {
                 self.pos += 1;
             }
             let result = self.expr();
-            return Ok(Node::var(cur, result));
+            if self.current_token() == Token::Semicolon {
+                self.pos += 1;
+                return Ok(Node::var_assign(cur, result));
+            } else {
+                return Err(format!("Missing semicolon!"));
+            }
         }
-        return Err(format!("Expected variable"));
+        return Err(format!("Expected variable equation"));
     }
     pub fn expr(&mut self) -> Node {
         let ops = [Token::Plus, Token::Minus];
@@ -65,6 +70,10 @@ impl<'a> Parser<'a> {
     }
     pub fn factor(&mut self) -> Result<Node, String> {
         let cur = self.current_token();
+        if self.current_token().is_var() {
+            self.pos += 1;
+            return Ok(Node::var(cur))
+        }
         if [Token::Plus, Token::Minus].contains(&self.current_token()) {
             self.pos += 1;
             return Ok(Node::un_op(cur, self.factor().unwrap()));

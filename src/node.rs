@@ -16,7 +16,13 @@ pub struct BlockNode {
 
 impl Node {
     /* конструкторы */
-    pub fn var(my_token: Token, my_child: Node) -> Node {
+    pub fn var(my_token: Token) -> Node {
+        Node {
+            children: Vec::new(),
+            token: my_token
+        }
+    }
+    pub fn var_assign(my_token: Token, my_child: Node) -> Node {
         Node::un_op(my_token, my_child)
     }
 
