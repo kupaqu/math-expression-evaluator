@@ -17,6 +17,22 @@ impl<'a> Parser<'a> {
         println!("pos: {}", self.pos);
         return self.tokens[self.pos];
     }
+
+    // присваивание переменной
+    pub fn assign(&mut self) -> Result<Node, String> {
+        let cur = self.current_token();
+        if self.current_token().is_var() {
+            self.pos += 1;
+            if self.current_token() != Token::Equation {
+                return Err(format!("Expected equation"));
+            } else {
+                self.pos += 1;
+            }
+            let result = self.expr();
+            return Ok(Node::var(cur, result));
+        }
+        return Err(format!("Expected variable"));
+    }
     pub fn expr(&mut self) -> Node {
         let ops = [Token::Plus, Token::Minus];
         let mut result = self.term();

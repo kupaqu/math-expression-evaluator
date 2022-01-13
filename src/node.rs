@@ -1,4 +1,5 @@
 use super::token::*;
+use std::collections::LinkedList;
 
 #[derive(Debug)]
 pub struct Node {
@@ -8,8 +9,17 @@ pub struct Node {
     pub token: Token
 }
 
+#[derive(Debug)]
+pub struct BlockNode {
+    children: LinkedList<Node>
+}
+
 impl Node {
     /* конструкторы */
+    pub fn var(my_token: Token, my_child: Node) -> Node {
+        Node::un_op(my_token, my_child)
+    }
+
     pub fn bin_op(left: Node, my_token: Token, right: Node) -> Node {
         println!("binop {:?}", my_token);
         Node {

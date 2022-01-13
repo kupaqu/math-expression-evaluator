@@ -18,10 +18,7 @@ pub enum Token {
 }
 
 impl Token {
-    // pub fn get_number(&self) -> u32 {
-    //     let Token::Number(n) = self;
-    //     return Ok(*n);
-    // }
+    // для работы с числами
     pub fn is_number(&self) -> bool {
         match self {
             Token::Number(_) => true,
@@ -33,6 +30,20 @@ impl Token {
             return Ok(*f);
         }
         return Err(format!("Calling get_num on non-numeric token"));
+    }
+
+    // для работы с переменной
+    pub fn is_var(&self) -> bool {
+        match self {
+            Token::Variable(_) => true,
+            _ => false
+        }
+    }
+    pub fn get_char(&self) -> Result<char, String> {
+        if let Token::Variable(c) = self {
+            return Ok(*c);
+        }
+        return Err(format!("Calling get_char on non-character token"));
     }
 }
 

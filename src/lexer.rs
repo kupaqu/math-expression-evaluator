@@ -27,6 +27,7 @@ pub fn tokenize(input_string: &str) -> Result<Vec<Token>, String> {
                 res.push(Token::Variable(c));
                 chars.next();
             }
+            // присваивание
             ':' => {
                 chars.next();
                 if let Some(&i) = chars.peek() {
@@ -39,6 +40,7 @@ pub fn tokenize(input_string: &str) -> Result<Vec<Token>, String> {
                     }
                 }
             }
+            // конец программы
             '.' => {
                 res.push(Token::Dot);
                 chars.next();
