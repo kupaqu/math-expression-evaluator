@@ -1,6 +1,8 @@
 use super::token::*;
 use super::node::*;
 
+use std::collections::LinkedList;
+
 pub struct Parser<'a> {
     tokens: &'a Vec<Token>,
     pos: usize
@@ -17,26 +19,29 @@ impl<'a> Parser<'a> {
         println!("pos: {}", self.pos);
         return self.tokens[self.pos];
     }
-
-    // присваивание переменной
-    pub fn assign(&mut self) -> Result<Node, String> {
-        let cur = self.current_token();
-        if self.current_token().is_var() {
-            self.pos += 1;
-            if self.current_token() != Token::Equation {
-                return Err(format!("Expected equation"));
-            } else {
-                self.pos += 1;
-            }
-            let result = self.expr();
-            if self.current_token() == Token::Semicolon {
-                self.pos += 1;
-                return Ok(Node::var_assign(cur, result));
-            } else {
-                return Err(format!("Missing semicolon!"));
-            }
+    pub fn prog(&mut self) -> Result<ListElement, String> {
+        let nodes_list = self.block()?;
+        if self.current_token() != Token::Dot {
+            return Err(format!("Expected Token::Dot"));
         }
-        return Err(format!("Expected variable equation"));
+        return Ok(nodes_list);
+    }
+    pub fn block(&mut self) -> Result<ListElement, String> {
+        if self.current_token() != Token::Begin {
+            return Err(format!("Expected Token::Begin"));
+        }
+        self.pos += 1;
+        let nodes = self.iterate()?;
+        if self.current_token() != Token::End {
+            return Err(format!("Expected Token::End"));
+        }
+        return Ok(nodes);
+    }
+    pub fn iterate(&mut self) -> Result<ListElement, String> {
+        let mut nodes = ListElement::CompositeNode(LinkedList::new());
+        while self.current_token() == Token::Semicolon {
+            
+        }
     }
     pub fn expr(&mut self) -> Node {
         let ops = [Token::Plus, Token::Minus];

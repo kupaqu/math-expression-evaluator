@@ -4,14 +4,15 @@ use std::collections::LinkedList;
 #[derive(Debug)]
 pub struct Node {
     /* использую вектор для избежания использования std::boxed::Box
-       и сопутствующих сложностей его использования */
+    и сопутствующих сложностей его использования */
     pub children: Vec<Node>,
     pub token: Token
 }
 
 #[derive(Debug)]
-pub struct BlockNode {
-    children: LinkedList<Node>
+pub enum ListElement {
+    CompositeNode(LinkedList<ListElement>),
+    SingleNode(Node)
 }
 
 impl Node {
