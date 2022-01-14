@@ -100,5 +100,6 @@ pub fn tokenize(input_string: &str) -> Result<Vec<Token>, String> {
         }
     }
     res.push(Token::Eos);
+    println!("{:?}", res);
     return Ok(res);
 }

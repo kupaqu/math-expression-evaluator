@@ -22,7 +22,12 @@ fn main() {
     // }
     if let Ok(tokens) = tokenize("
     BEGIN
-        a := a + 1 + b + 2;
+        BEGIN
+        END;
+        BEGIN
+            a := a + 1 + b + 2;
+            c := 1 + 2 + 3 + d;
+        END;
     END."
     ) {
         println!("{:?}", tokens);

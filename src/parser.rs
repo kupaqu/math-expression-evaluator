@@ -16,7 +16,7 @@ impl<'a> Parser<'a> {
         }
     }
     fn current_token(&mut self) -> Token {
-        // println!("pos: {}", self.pos);
+        println!("pos: {}", self.pos);
         return self.tokens[self.pos];
     }
     pub fn prog(&mut self) -> Result<ListElement, String> {
@@ -41,8 +41,8 @@ impl<'a> Parser<'a> {
     pub fn iterate(&mut self) -> Result<ListElement, String> {
         let mut nodes = Composite::from([self.assign()?]); // список из одного, первого элемента
         while self.current_token() == Token::Semicolon {
-            nodes.push_back(self.assign()?);
             self.pos += 1;
+            nodes.push_back(self.assign()?);
         }
         return Ok(ListElement::Composite(nodes));
     }
@@ -122,6 +122,10 @@ impl<'a> Parser<'a> {
             } else {
                 return Err(format!("Expected Token::Rparen"));
             }
+        }
+        if self.current_token() == Token::Semicolon {
+            println!("Here's our semicolon!");
+            return Err(format!("Here's our semicolon!"));
         }
         return Err(format!("Unexpected token {:?}", self.current_token()));
     }

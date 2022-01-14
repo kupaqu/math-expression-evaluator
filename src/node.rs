@@ -20,9 +20,11 @@ pub type Composite = LinkedList<ListElement>;
 
 impl ListElement {
     pub fn composite(self) -> Composite {
+        println!("composite");
         if let ListElement::Composite(item) = self { item } else { panic!("Not a composite") }
     }
     pub fn node(self) -> Node {
+        println!("node");
         if let ListElement::Node(item) = self { item } else { panic!("Not a node") }
     }
 }
