@@ -16,7 +16,7 @@ impl<'a> Parser<'a> {
         }
     }
     fn current_token(&mut self) -> Token {
-        println!("pos: {}", self.pos);
+        // println!("pos: {}", self.pos);
         return self.tokens[self.pos];
     }
     pub fn prog(&mut self) -> Result<ListElement, String> {
@@ -35,14 +35,40 @@ impl<'a> Parser<'a> {
         if self.current_token() != Token::End {
             return Err(format!("Expected Token::End"));
         }
+        self.pos += 1;
         return Ok(nodes);
     }
     pub fn iterate(&mut self) -> Result<ListElement, String> {
-        let mut nodes = ListElement::CompositeNode(LinkedList::new());
+        let mut nodes = Composite::from([self.assign()?]); // список из одного, первого элемента
         while self.current_token() == Token::Semicolon {
-            
+            nodes.push_back(self.assign()?);
+            self.pos += 1;
+        }
+        return Ok(ListElement::Composite(nodes));
+    }
+    
+    pub fn assign(&mut self) -> Result<ListElement, String> {
+        let cur = self.current_token();
+        if self.current_token() == Token::Begin {
+            let res = self.block()?.composite();
+            self.pos += 1;
+            return Ok(ListElement::Composite(res));
+        } else if self.current_token().is_var() {
+            self.pos += 1;
+            if self.current_token() == Token::Equation {
+                self.pos += 1;
+                let res = self.expr();
+                let node = Node::var_assign(cur, res);
+                return Ok(ListElement::Node(node));
+            } else {
+                let res = self.expr();
+                return Ok(ListElement::Node(res));
+            }
+        } else {
+            return Err(format!("Unexpected token {:?}", self.current_token()));
         }
     }
+
     pub fn expr(&mut self) -> Node {
         let ops = [Token::Plus, Token::Minus];
         let mut result = self.term();
