@@ -9,22 +9,23 @@ pub struct Node {
     pub token: Token
 }
 
-// https://stackoverflow.com/questions/34953711/unwrap-inner-type-when-enum-variant-is-known
+/* https://stackoverflow.com/questions/34953711/unwrap-inner-type-when-enum-variant-is-known */
 #[derive(Debug)]
 pub enum ListElement {
     Composite(Composite),
-    Node(Node)
+    Node(Node),
+    None
 }
 
 pub type Composite = LinkedList<ListElement>;
 
 impl ListElement {
     pub fn composite(self) -> Composite {
-        println!("composite");
+        // println!("composite");
         if let ListElement::Composite(item) = self { item } else { panic!("Not a composite") }
     }
     pub fn node(self) -> Node {
-        println!("node");
+        // println!("node");
         if let ListElement::Node(item) = self { item } else { panic!("Not a node") }
     }
 }

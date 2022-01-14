@@ -1,8 +1,6 @@
 use super::token::*;
 use super::node::*;
 
-use std::collections::LinkedList;
-
 pub struct Parser<'a> {
     tokens: &'a Vec<Token>,
     pos: usize
@@ -19,6 +17,7 @@ impl<'a> Parser<'a> {
         println!("pos: {}", self.pos);
         return self.tokens[self.pos];
     }
+    /* обработка главного блока */
     pub fn prog(&mut self) -> Result<ListElement, String> {
         let nodes_list = self.block()?;
         if self.current_token() != Token::Dot {
@@ -26,18 +25,21 @@ impl<'a> Parser<'a> {
         }
         return Ok(nodes_list);
     }
+    /* обработка подблоков */
     pub fn block(&mut self) -> Result<ListElement, String> {
         if self.current_token() != Token::Begin {
             return Err(format!("Expected Token::Begin"));
         }
         self.pos += 1;
         let nodes = self.iterate()?;
+        println!("{:?}", self.current_token());
         if self.current_token() != Token::End {
             return Err(format!("Expected Token::End"));
         }
         self.pos += 1;
         return Ok(nodes);
     }
+    /* итерация присваиваний и подблоков */
     pub fn iterate(&mut self) -> Result<ListElement, String> {
         let mut nodes = Composite::from([self.assign()?]); // список из одного, первого элемента
         while self.current_token() == Token::Semicolon {
@@ -46,13 +48,14 @@ impl<'a> Parser<'a> {
         }
         return Ok(ListElement::Composite(nodes));
     }
-    
+    /* обработка присваивания и подблоков */
     pub fn assign(&mut self) -> Result<ListElement, String> {
         let cur = self.current_token();
         if self.current_token() == Token::Begin {
             let res = self.block()?.composite();
-            self.pos += 1;
             return Ok(ListElement::Composite(res));
+        } else if self.current_token() == Token::End {
+            return Ok(ListElement::None);
         } else if self.current_token().is_var() {
             self.pos += 1;
             if self.current_token() == Token::Equation {
@@ -68,7 +71,7 @@ impl<'a> Parser<'a> {
             return Err(format!("Unexpected token {:?}", self.current_token()));
         }
     }
-
+    /* обработка непосредственно выражения */
     pub fn expr(&mut self) -> Node {
         let ops = [Token::Plus, Token::Minus];
         let mut result = self.term();
@@ -122,10 +125,6 @@ impl<'a> Parser<'a> {
             } else {
                 return Err(format!("Expected Token::Rparen"));
             }
-        }
-        if self.current_token() == Token::Semicolon {
-            println!("Here's our semicolon!");
-            return Err(format!("Here's our semicolon!"));
         }
         return Err(format!("Unexpected token {:?}", self.current_token()));
     }

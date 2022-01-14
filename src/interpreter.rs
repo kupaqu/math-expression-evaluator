@@ -1,6 +1,22 @@
 use super::token::*;
 use super::node::*;
 
+use std::collections::LinkedList;
+use std::collections::HashMap;
+
+#[derive(Debug)]
+pub struct Interpreter {
+    variables: LinkedList<HashMap<char, f64>>
+}
+
+impl Interpreter {
+    pub fn new() -> Interpreter {
+        Interpreter {
+            variables: LinkedList::new()
+        }
+    }
+}
+
 pub fn interpret(tree: &Node) -> f64 {
     return visit(tree);
 }

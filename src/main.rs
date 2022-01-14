@@ -21,18 +21,19 @@ fn main() {
     //     println!("{}", interpret(&tree));
     // }
     if let Ok(tokens) = tokenize("
-    BEGIN
         BEGIN
-        END;
-        BEGIN
-            a := a + 1 + b + 2;
-            c := 1 + 2 + 3 + d;
-        END;
-    END."
+            BEGIN
+                a := 1;
+            END;
+            BEGIN
+                a := a + 1 + b + 2;
+                c := 1 + 2 + 3 + d;
+            END;
+        END."
     ) {
         println!("{:?}", tokens);
         let mut parser = Parser::new(&tokens);
         let tree = parser.prog();
+        println!("{:?}", tree);
     }
-
 }

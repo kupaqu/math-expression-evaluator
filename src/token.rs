@@ -18,7 +18,7 @@ pub enum Token {
 }
 
 impl Token {
-    // для работы с числами
+    /* вспомогательные функции для работы с числами */
     pub fn is_number(&self) -> bool {
         match self {
             Token::Number(_) => true,
@@ -32,7 +32,7 @@ impl Token {
         return Err(format!("Calling get_num on non-numeric token"));
     }
 
-    // для работы с переменной
+    /* вспомогательные функции для работы с идентификаторами переменной */
     pub fn is_var(&self) -> bool {
         match self {
             Token::Variable(_) => true,

@@ -6,7 +6,6 @@ pub fn tokenize(input_string: &str) -> Result<Vec<Token>, String> {
     /* когда chars закончится будет возвращаться None и цикл завершится */
     while let Some(&c) = chars.peek() {
         match c {
-            // ключевые слова BEGIN и END
             'A'..='Z' => {
                 let mut word: String = String::new();
                 while let Some(ch) = chars.next_if(|&x| x.is_alphabetic()) {
@@ -22,12 +21,10 @@ pub fn tokenize(input_string: &str) -> Result<Vec<Token>, String> {
                     return Err(format!("Unknown word {}", word));
                 }
             }
-            // переменные
             'a'..='z' => {
                 res.push(Token::Variable(c));
                 chars.next();
             }
-            // присваивание
             ':' => {
                 chars.next();
                 if let Some(&i) = chars.peek() {
@@ -40,12 +37,10 @@ pub fn tokenize(input_string: &str) -> Result<Vec<Token>, String> {
                     }
                 }
             }
-            // конец программы
             '.' => {
                 res.push(Token::Dot);
                 chars.next();
             }
-            // точка с запятой
             ';' => {
                 res.push(Token::Semicolon);
                 chars.next();
@@ -100,6 +95,6 @@ pub fn tokenize(input_string: &str) -> Result<Vec<Token>, String> {
         }
     }
     res.push(Token::Eos);
-    println!("{:?}", res);
+    // println!("{:?}", res);
     return Ok(res);
 }
