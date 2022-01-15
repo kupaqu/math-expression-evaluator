@@ -20,7 +20,7 @@ fn main() {
     //     let tree = parser.expr();
     //     println!("{}", interpret(&tree));
     // }
-    if let Ok(tokens) = tokenize("
+    /*if let Ok(tokens) = tokenize("
         BEGIN
             BEGIN
                 a := 1;
@@ -30,7 +30,8 @@ fn main() {
                 c := 1 + 2 + 3 + d;
             END;
         END."
-    ) {
+    )*/
+    if let Ok(tokens) = tokenize("BEGIN a := 1 + b END.") {
         println!("{:?}", tokens);
         let mut parser = Parser::new(&tokens);
         let tree = parser.prog();
