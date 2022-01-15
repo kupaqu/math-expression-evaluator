@@ -1,14 +1,26 @@
-use super::token::*;
 use super::node::*;
 
 use std::collections::LinkedList;
 use std::collections::HashMap;
 
-pub type Variables = LinkedList<HashMap<char, f64>>;
+/* модификация цепочки таблиц (A. Aхо - "Компиляторы", глава 2.7), идущая сверху вниз (занимает много памяти?) */
+#[derive(Clone)]
+pub struct Visibility {
+    seen: HashMap<char, f64>,
+    mine: HashMap<char, f64>
+}
 
-#[derive(Debug)]
-pub struct Interpreter {
-    variables: Variables
+impl Visibility {
+    pub fn new() -> Visibility {
+        Visibility {
+            seen: HashMap::new(),
+            mine: HashMap::new()
+        }
+    }
+}
+
+pub struct Interpreter{ 
+    variables: LinkedList<HashMap<char, f64>>
 }
 
 impl Interpreter {
@@ -17,27 +29,47 @@ impl Interpreter {
             variables: LinkedList::new()
         }
     }
-    pub fn interpret(&mut self, tree: ListElement) -> Result<Variables, String> {
-        let global_hash = HashMap::new();
-        self.visit(tree, global_hash);
-        return Ok(self.variables);
+
+    pub fn interpret(&mut self, root: ListElement) {
+        let my_visibility = Visibility::new();
+        self.visit(root, my_visibility);
+        return;
     }
-    fn visit(&mut self, tree_node: ListElement, vars: HashMap<char, f64>) {
+
+    pub fn visit(&mut self, tree_node: ListElement, mut visibility: Visibility) {
         match tree_node {
             ListElement::Node(node) => {
-                if node.token.is_var() {
-                    let varchar = node.token.get_char()?;
-                    let val = self.visit_node(node)?;
-                    vars.insert(node.token.get_char(), self.visit_node(node));
-                    return;
+                let char = node.token.get_char().unwrap();
+                if visibility.mine.contains_key(&char) {
+                    visibility.mine.remove(&char);
                 }
-            },
+                let res = 0.0;
+                visibility.mine.insert(char, res);
+                visibility.seen.insert(char, res);
+                return;
+            }
             ListElement::Composite(block) => {
-                
-            },
+                // let mut my_visibility = Visibility::new();
+                // my_visibility.seen = visibility.seen.clone();
+                // for component in block {
+                //     self.visit(component, my_visibility);
+                // }
+                // self.variables.push_back(my_visibility.mine.clone());
+                // return;
+
+                self.variables.push_back(HashMap::new());
+                for component in block {
+                    self.visit(component, );
+                }
+            }
+            _ => {
+                return;
+            }
         }
     }
-    fn visit_node(&mut self, node: Node) -> Result<f64, String> {
-        Ok(0.0)
-    }
+
+    // pub fn visit_node(&mut self, node: Node) -> f64 {
+    //     return 0.0;
+    // }
+
 }
