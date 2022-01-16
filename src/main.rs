@@ -33,10 +33,10 @@ fn main() {
     END."
     )
     /*if let Ok(tokens) = tokenize("BEGIN a:= 1+2; a:= a+1; END.")*/ {
-        println!("{:?}", tokens);
+        // println!("{:?}", tokens);
         let mut parser = Parser::new(&tokens);
         let mut tree = parser.prog().unwrap();
-        println!("{:?}", tree);
+        // println!("{:?}", tree);
         let mut interpreter = Interpreter::new();
         interpreter.interpret(tree);
         println!("{:?}", interpreter.variables);

@@ -14,7 +14,6 @@ impl<'a> Parser<'a> {
         }
     }
     fn current_token(&mut self) -> Token {
-        // println!("pos: {}", self.pos);
         return self.tokens[self.pos];
     }
     /* обработка главного блока */
@@ -32,7 +31,6 @@ impl<'a> Parser<'a> {
         }
         self.pos += 1;
         let nodes = self.iterate()?;
-        // println!("{:?}", self.current_token());
         if self.current_token() != Token::End {
             return Err(format!("Expected Token::End"));
         }
@@ -85,10 +83,11 @@ impl<'a> Parser<'a> {
     pub fn term(&mut self) -> Node {
         let ops = [Token::Mul, Token::Div];
         let mut result = self.pow();
-        let cur = self.current_token();
         while ops.contains(&self.current_token()) {
+            let cur = self.current_token();
             self.pos += 1;
             result = Node::bin_op(result, cur, self.pow());
+            println!("{:?}", result);
         }
         return result;
     }

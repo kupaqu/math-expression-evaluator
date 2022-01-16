@@ -97,9 +97,9 @@ impl Interpreter {
         } else if node.token == Token::Mul {
             return Ok(self.visit_node(&node.children[0], visibility) * self.visit_node(&node.children[1], visibility));
         } else if node.token == Token::Div {
-            if let denom = self.visit_node(&node.children[1], visibility) == 0. {
-                return Ok(f64::INFINITY);
-            }
+            // if let denom = self.visit_node(&node.children[1], visibility) == 0. {
+            //     return Ok(f64::INFINITY);
+            // }
             return Ok(self.visit_node(&node.children[0], visibility) / self.visit_node(&node.children[1], visibility));
         } else if node.token == Token::Pow {
             return Ok(self.visit_node(&node.children[0], visibility).powf(self.visit_node(&node.children[1], visibility)));
