@@ -20,7 +20,7 @@ impl Visibility {
 }
 
 pub struct Interpreter{ 
-    variables: LinkedList<HashMap<char, f64>>
+    pub variables: LinkedList<HashMap<char, f64>>
 }
 
 impl Interpreter {
@@ -31,12 +31,12 @@ impl Interpreter {
     }
 
     pub fn interpret(&mut self, root: ListElement) {
-        let my_visibility = Visibility::new();
-        self.visit(root, my_visibility);
+        let mut my_visibility = Visibility::new();
+        self.visit(root, &mut my_visibility);
         return;
     }
 
-    pub fn visit(&mut self, tree_node: ListElement, mut visibility: Visibility) {
+    pub fn visit(&mut self, tree_node: ListElement, visibility: &mut Visibility) {
         match tree_node {
             ListElement::Node(node) => {
                 let char = node.token.get_char().unwrap();
@@ -47,14 +47,14 @@ impl Interpreter {
                 visibility.mine.insert(char, res);
                 visibility.seen.insert(char, res);
                 return;
-            }
+            },
             ListElement::Composite(block) => {
                 let mut my_visibility = Visibility::new();
                 my_visibility.seen = visibility.seen.clone();
                 for component in block {
-                    self.visit(component, my_visibility);
+                    self.visit(component, &mut my_visibility);
                 }
-                self.variables.push_back(my_visibility.mine.clone());
+                self.variables.push_back(my_visibility.mine);
                 return;
             }
             _ => {
@@ -63,8 +63,8 @@ impl Interpreter {
         }
     }
 
-    // pub fn visit_node(&mut self, node: Node) -> f64 {
-    //     return 0.0;
-    // }
+    pub fn visit_node(&mut self, node: Node) -> f64 {
+        return 0.0;
+    }
 
 }
