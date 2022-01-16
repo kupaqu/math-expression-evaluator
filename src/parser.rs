@@ -14,7 +14,7 @@ impl<'a> Parser<'a> {
         }
     }
     fn current_token(&mut self) -> Token {
-        println!("pos: {}", self.pos);
+        // println!("pos: {}", self.pos);
         return self.tokens[self.pos];
     }
     /* обработка главного блока */
@@ -32,7 +32,7 @@ impl<'a> Parser<'a> {
         }
         self.pos += 1;
         let nodes = self.iterate()?;
-        println!("{:?}", self.current_token());
+        // println!("{:?}", self.current_token());
         if self.current_token() != Token::End {
             return Err(format!("Expected Token::End"));
         }

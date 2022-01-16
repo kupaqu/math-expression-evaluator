@@ -20,18 +20,19 @@ fn main() {
     //     let tree = parser.expr();
     //     println!("{}", interpret(&tree));
     // }
-    // if let Ok(tokens) = tokenize("
-    //     BEGIN
-    //         BEGIN
-    //             a := 1;
-    //         END;
-    //         BEGIN
-    //             a := a + 1 + b + 2;
-    //             c := 1 + 2 + 3 + d;
-    //         END;
-    //     END."
-    // )
-    if let Ok(tokens) = tokenize("BEGIN a := 1 + b END.") {
+    if let Ok(tokens) = tokenize("
+    BEGIN
+        y := 2;
+        BEGIN
+            a := 3;
+            a := a;
+            b := 10 + a + 10 * y / 4;
+            c := a - b;
+        END;
+        x := 11;
+    END."
+    )
+    /*if let Ok(tokens) = tokenize("BEGIN a:= 1+2; a:= a+1; END.")*/ {
         println!("{:?}", tokens);
         let mut parser = Parser::new(&tokens);
         let mut tree = parser.prog().unwrap();

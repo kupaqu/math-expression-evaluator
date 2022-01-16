@@ -33,33 +33,33 @@ impl ListElement {
 impl Node {
     /* конструкторы */
     pub fn var(my_token: Token) -> Node {
-        println!("var {:?}", my_token);
+        // println!("var {:?}", my_token);
         Node {
             children: Vec::new(),
             token: my_token
         }
     }
     pub fn var_assign(my_token: Token, my_child: Node) -> Node {
-        println!("var assign {:?}", my_token);
+        // println!("var assign {:?}", my_token);
         Node::un_op(my_token, my_child)
     }
 
     pub fn bin_op(left: Node, my_token: Token, right: Node) -> Node {
-        println!("binop {:?}", my_token);
+        // println!("binop {:?}", my_token);
         Node {
             children: vec![left, right],
             token: my_token
         }
     }
     pub fn un_op(my_token: Token, my_child: Node) -> Node {
-        println!("unop {:?}", my_token);
+        // println!("unop {:?}", my_token);
         Node {
             children: vec![my_child],
             token: my_token
         }
     }
     pub fn number(my_token: Token) -> Node {
-        println!("number {:?}", my_token);
+        // println!("number {:?}", my_token);
         Node {
             children: Vec::new(),
             token: my_token

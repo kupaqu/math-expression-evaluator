@@ -44,7 +44,7 @@ impl Interpreter {
                 if visibility.mine.contains_key(&char) {
                     visibility.mine.remove(&char);
                 }
-                let res = self.visit_node(&node, visibility);
+                let res = self.visit_node(&node.children[0], visibility);
                 visibility.mine.insert(char, res);
                 visibility.seen.insert(char, res);
                 return;
