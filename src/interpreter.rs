@@ -49,18 +49,13 @@ impl Interpreter {
                 return;
             }
             ListElement::Composite(block) => {
-                // let mut my_visibility = Visibility::new();
-                // my_visibility.seen = visibility.seen.clone();
-                // for component in block {
-                //     self.visit(component, my_visibility);
-                // }
-                // self.variables.push_back(my_visibility.mine.clone());
-                // return;
-
-                self.variables.push_back(HashMap::new());
+                let mut my_visibility = Visibility::new();
+                my_visibility.seen = visibility.seen.clone();
                 for component in block {
-                    self.visit(component, );
+                    self.visit(component, my_visibility);
                 }
+                self.variables.push_back(my_visibility.mine.clone());
+                return;
             }
             _ => {
                 return;
