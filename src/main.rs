@@ -20,23 +20,23 @@ fn main() {
     //     let tree = parser.expr();
     //     println!("{}", interpret(&tree));
     // }
-    /*if let Ok(tokens) = tokenize("
-        BEGIN
-            BEGIN
-                a := 1;
-            END;
-            BEGIN
-                a := a + 1 + b + 2;
-                c := 1 + 2 + 3 + d;
-            END;
-        END."
-    )*/
+    // if let Ok(tokens) = tokenize("
+    //     BEGIN
+    //         BEGIN
+    //             a := 1;
+    //         END;
+    //         BEGIN
+    //             a := a + 1 + b + 2;
+    //             c := 1 + 2 + 3 + d;
+    //         END;
+    //     END."
+    // )
     if let Ok(tokens) = tokenize("BEGIN a := 1 + b END.") {
         println!("{:?}", tokens);
         let mut parser = Parser::new(&tokens);
-        let tree = parser.prog().unwrap();
+        let mut tree = parser.prog().unwrap();
         println!("{:?}", tree);
-        let interpreter = Interpreter::new();
+        let mut interpreter = Interpreter::new();
         interpreter.interpret(tree);
         println!("{:?}", interpreter.variables);
 
