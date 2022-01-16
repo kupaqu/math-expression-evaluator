@@ -1,7 +1,7 @@
 use super::token::*;
 use std::collections::LinkedList;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Node {
     /* использую вектор для избежания использования std::boxed::Box
     и сопутствующих сложностей его использования */
@@ -10,7 +10,7 @@ pub struct Node {
 }
 
 /* https://stackoverflow.com/questions/34953711/unwrap-inner-type-when-enum-variant-is-known */
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum ListElement {
     Composite(Composite),
     Node(Node),

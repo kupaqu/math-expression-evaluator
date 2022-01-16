@@ -98,3 +98,16 @@ pub fn tokenize(input_string: &str) -> Result<Vec<Token>, String> {
     // println!("{:?}", res);
     return Ok(res);
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_tokenize() {
+        let correct_tokens = Ok(vec![Token::Begin, Token::Variable('y'), Token::Equation, Token::Number(4.0), Token::Mul,
+        Token::Variable('x'), Token::Plus, Token::Number(10.0), Token::Semicolon, Token::End, Token::Dot, Token::Eos]);
+        let tokens = tokenize("BEGIN y := 4*x+10; END.");
+        assert_eq!(correct_tokens, tokens);
+    }
+}

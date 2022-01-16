@@ -46,3 +46,16 @@ impl Token {
         return Err(format!("Calling get_char on non-character token"));
     }
 }
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_token() {
+        assert_eq!(Token::Number(10.).is_number(), true);
+        assert_eq!(Token::Variable('a').is_number(), false);
+        assert_eq!(Token::Number(10.).get_num(), Ok(10.));
+        assert_eq!(Token::Variable('b').is_var(), true);
+        assert_eq!(Token::Number(20.).is_var(), false);
+        assert_eq!(Token::Variable('c').get_char(), Ok('c'));
+    }
+}

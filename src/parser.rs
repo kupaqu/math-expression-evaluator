@@ -25,7 +25,7 @@ impl<'a> Parser<'a> {
         return Ok(nodes_list);
     }
     /* обработка подблоков */
-    pub fn block(&mut self) -> Result<ListElement, String> {
+    fn block(&mut self) -> Result<ListElement, String> {
         if self.current_token() != Token::Begin {
             return Err(format!("Expected Token::Begin"));
         }
@@ -38,7 +38,7 @@ impl<'a> Parser<'a> {
         return Ok(nodes);
     }
     /* итерация присваиваний и подблоков */
-    pub fn iterate(&mut self) -> Result<ListElement, String> {
+    fn iterate(&mut self) -> Result<ListElement, String> {
         let mut nodes = Composite::from([self.assign()?]); // список из одного, первого элемента
         while self.current_token() == Token::Semicolon {
             self.pos += 1;
@@ -47,7 +47,7 @@ impl<'a> Parser<'a> {
         return Ok(ListElement::Composite(nodes));
     }
     /* обработка присваивания и подблоков */
-    pub fn assign(&mut self) -> Result<ListElement, String> {
+    fn assign(&mut self) -> Result<ListElement, String> {
         let cur = self.current_token();
         if self.current_token() == Token::Begin {
             let res = self.block()?.composite();
@@ -70,28 +70,27 @@ impl<'a> Parser<'a> {
         }
     }
     /* обработка непосредственно выражения */
-    pub fn expr(&mut self) -> Node {
+    fn expr(&mut self) -> Node {
         let ops = [Token::Plus, Token::Minus];
         let mut result = self.term();
-        let cur = self.current_token();
         while ops.contains(&self.current_token()) {
+            let cur = self.current_token();
             self.pos += 1;
             result = Node::bin_op(result, cur, self.term());
         }
         return result;
     }
-    pub fn term(&mut self) -> Node {
+    fn term(&mut self) -> Node {
         let ops = [Token::Mul, Token::Div];
         let mut result = self.pow();
         while ops.contains(&self.current_token()) {
             let cur = self.current_token();
             self.pos += 1;
             result = Node::bin_op(result, cur, self.pow());
-            println!("{:?}", result);
         }
         return result;
     }
-    pub fn pow(&mut self) -> Node {
+    fn pow(&mut self) -> Node {
         let ops = [Token::Pow];
         let mut result = self.factor().unwrap();
         let cur = self.current_token();
@@ -101,7 +100,7 @@ impl<'a> Parser<'a> {
         }
         return result;
     }
-    pub fn factor(&mut self) -> Result<Node, String> {
+    fn factor(&mut self) -> Result<Node, String> {
         let cur = self.current_token();
         if self.current_token().is_var() {
             self.pos += 1;
@@ -126,5 +125,47 @@ impl<'a> Parser<'a> {
             }
         }
         return Err(format!("Unexpected token {:?}", self.current_token()));
+    }
+}
+
+mod tests {
+    use super::*;
+    use super::super::lexer::*;
+    use std::collections::LinkedList;
+
+    #[test]
+    fn test_empty_block_parser() {
+        let tokens = tokenize("BEGIN END.").unwrap();
+        let mut parser = Parser::new(&tokens);
+        let tree = parser.prog().unwrap();
+        let correct_tree = ListElement::Composite(LinkedList::from([ListElement::None]));
+        assert_eq!(tree, correct_tree);
+    }
+    #[test]
+    fn test_several_blocks_parser() {
+        let tokens = tokenize("BEGIN a:=1; BEGIN b:=2; END; END.").unwrap();
+        let mut parser = Parser::new(&tokens);
+        let tree = parser.prog().unwrap();
+        let correct_tree = ListElement::Composite(LinkedList::from([
+            ListElement::Node(Node {
+                    children: vec![
+                        Node {
+                            children: vec![],
+                            token: Token::Number(1.0)
+                        }
+                    ],
+                    token: Token::Variable('a')
+            }),
+            ListElement::Composite(LinkedList::from([
+                ListElement::Node(Node { 
+                    children: vec![
+                        Node { children: vec![], token: Token::Number(2.0) }
+                    ],
+                    token: Token::Variable('b')
+                }),
+                ListElement::None])),
+            ListElement::None])
+        );
+        assert_eq!(tree, correct_tree);
     }
 }

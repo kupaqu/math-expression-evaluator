@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "math-expression-evaluator"
+name = "naive_pascal"
 version = "0.1.0"

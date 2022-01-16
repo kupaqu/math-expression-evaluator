@@ -31,10 +31,10 @@ impl Interpreter {
         }
     }
 
-    pub fn interpret(&mut self, root: ListElement) {
+    pub fn interpret(&mut self, root: ListElement) -> Result<LinkedList<HashMap<char, f64>>, String> {
         let mut my_visibility = Visibility::new();
         self.visit(root, &mut my_visibility);
-        return;
+        return Ok(self.variables.clone());
     }
 
     pub fn visit(&mut self, tree_node: ListElement, visibility: &mut Visibility) {
@@ -107,4 +107,53 @@ impl Interpreter {
             return Err(format!("Unexpected node token type!"));
         }
     }
+}
+
+mod tests {
+    use super::*;
+    use super::super::lexer::*;
+    use super::super::parser::*;
+    use std::collections::LinkedList;
+
+    #[test]
+    fn test_empty_block_interpreter() {
+        let tokens = tokenize("BEGIN END.").unwrap();
+        let mut parser = Parser::new(&tokens);
+        let mut tree = parser.prog().unwrap();
+        let mut interpreter = Interpreter::new();
+        let mut variables = interpreter.interpret(tree).unwrap();
+        assert_eq!(variables, LinkedList::from([HashMap::new()]));
+    }
+    #[test]
+    fn test_vars_interpreter() {
+        let tokens = tokenize(" BEGIN
+                                    x:= 2 + 3 * (2 + 3);
+                                    y:= 2 / 2 - 2 + 3 * ((1 + 1) + (1 + 1));
+                                END.").unwrap();
+        let mut parser = Parser::new(&tokens);
+        let mut tree = parser.prog().unwrap();
+        let mut interpreter = Interpreter::new();
+        let mut variables = interpreter.interpret(tree).unwrap();
+        assert_eq!(variables, LinkedList::from([HashMap::from([('x', 17.0), ('y', 11.0)])]));
+    }
+    #[test]
+    fn test_blocks_interpreter() {
+        let tokens = tokenize(" BEGIN
+                                    y := 2;
+                                    BEGIN
+                                        a := 3;
+                                        a := a;
+                                        b := 10 + a + 10 * y / 4;
+                                        c := a - b
+                                    END;
+                                    x := 11;
+                                END.").unwrap();
+        let mut parser = Parser::new(&tokens);
+        let mut tree = parser.prog().unwrap();
+        let mut interpreter = Interpreter::new();
+        let mut variables = interpreter.interpret(tree).unwrap();
+        assert_eq!(variables, LinkedList::from([HashMap::from([('a', 3.0), ('c', -15.0), ('b', 18.0)]),
+                                                HashMap::from([('x', 11.0), ('y', 2.0)])]));
+    }
+
 }
